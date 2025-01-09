@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.mysite.msa_exam.dao.CourseGroupMapper">
+	
+	<select id="getCourseGroupList"  resultType="com.mysite.msa_exam.dto.course_group.CourseGroupDTO">
+		SELECT * FROM (
+			SELECT CGM_CD, CGM_GRP_CD,CGM_NM,CGM_MEMO, CGM_CLS, CGM_VIEW_YN, CGM_ST_TYPE
+			,CHR_CNT=(SELECT COUNT(*) FROM  MS_CHRGRP_CHR WITH(NOLOCK) WHERE CGC_CGM_CD=CGM_CD)
+			,ROW_NO = ROW_NUMBER() OVER(ORDER BY CGM_ST_TYPE DESC, CGM_GRP_CD DESC)
+			,TOTAL_CNT = COUNT(*) OVER()
+			FROM MS_CHRGRP_MAS WITH(NOLOCK) where CGM_DEL_YN='N'
+			<if test="search.schClassType != null and search.schClassType != ''">
+				AND CGM_CLS=#{search.schClassType}
+			</if>
+			<if test="search.schView != null and search.schView != ''">
+				AND CGM_VIEW_YN = #{search.schView}
+			</if>
+			<if test="search.schStr != null and search.schStr != ''">
+				AND CGM_MEMO LIKE '%' + #{search.schStr} + '%'
+			</if>
+		) PG
+		WHERE PG.ROW_NO BETWEEN ((#{page}-1) * #{pageSize}) +1 AND #{page} * #{pageSize}
+		ORDER BY PG.ROW_NO
+	</select>
+	
+</mapper>

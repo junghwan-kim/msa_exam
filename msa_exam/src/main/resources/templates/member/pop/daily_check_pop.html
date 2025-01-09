@@ -1,0 +1,60 @@
+<html layout:decorate="~{layout}">
+<div id="wrap" layout:fragment="content">
+	<div class="msa-pop__top">
+		<h3>attendance check date</h3>
+		<button type="button" class="msa-pop__close" onclick="javascript:self.close();">닫기</button>
+	</div>
+	<div class="msa-wrap">
+	    <span>ID: [[${mem_id}]]</span>
+	</div>
+	<table class="msa-tb topic_tbl" style="width:100%;">
+        <colgroup>
+            <col width="*">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>check date</th>
+            </tr>
+        </thead>
+        <tbody>
+        	<tr th:unless="${#strings.isEmpty(dailyCheckList)}"  th:each="daily, loop : ${dailyCheckList}" class="trLists">
+        		<td th:text="${daily.mdc_reg_dt}" style="text-align:center;"></td>
+        	</tr>
+   			<tr th:if="${#strings.isEmpty(dailyCheckList)}">
+				<td>데이터가 없습니다</td>
+			</tr>
+        </tbody>
+    </table>
+    <div class="pagination">
+		<th:block th:if="${pagination.getTotalListCnt() != 0}">
+			<th:block th:if="${pagination.getPage() != 1}">
+				<a th:href="|javascript:fnc_pageMove('1')|" class="first"></a>
+				<a th:href="|javascript:fnc_pageMove('${pagination.getPrev()}')|" class="prev"></a> 
+			</th:block>
+		</th:block>
+		<ul th:each="page: ${#numbers.sequence(pagination.getStartPage(), pagination.getEndPage())}">	
+			<li>
+				<a th:if="${page == pagination.getPage()}" th:text="${page}" class="on"></a>
+				<a th:unless="${page == pagination.getPage()}" th:text="${page}" th:href="|javascript:fnc_pageMove('${page}')|"></a> 
+			</li>
+		</ul>	
+		<th:block th:if="${pagination.getTotalListCnt() != 0}">
+			<th:block th:if="${pagination.getPage() != pagination.totalPageCnt}">
+				<a th:href="|javascript:fnc_pageMove('${pagination.getNext()}')|" class="next"></a>
+				<a th:href="|javascript:fnc_pageMove('${pagination.getTotalPageCnt()}')|" class="last"></a>
+			</th:block>
+		</th:block>	
+	</div>
+	<form name="pageFrm" action="/member/daily_check_pop" method="get">
+		<input type="hidden" name="mem_id" id="mem_id" th:value="${mem_id}" />
+		<input type="hidden" name="page" id="page" />
+	</form>
+	<script layout:fragment="script" type='text/javascript'>
+	function fnc_pageMove(page){
+	   var f = document.pageFrm;
+	   f.page.value = page;
+	   f.submit();
+   }
+	</script>
+</div>
+</html>

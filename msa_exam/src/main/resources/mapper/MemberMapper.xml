@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+<mapper namespace="Exam">
+
+	<select id="getExamList" resultType="exam">
+		select em_cd, em_nm, em_nm_kr, em_view_yn, convert(nvarchar(16), em_reg_dt, 121) as  em_reg_dt from ms_exam_mas order by em_reg_dt desc
+	</select>
+</mapper>
+-->
+<mapper namespace="com.mysite.msa_exam.dao.MemberMapper">
+	<select id="findAll" statementType="CALLABLE" resultType="com.mysite.msa_exam.dto.member.MemberDTO">
+		{CALL Msp_Get_Mem_Mas_04(
+			#{page}
+			,#{pageSize}
+			,#{search.startDt}
+			,#{search.endDt}
+			,#{search.sch_dchk}
+			,#{search.smode}
+			,#{search.keyword}
+			)
+		}
+	</select>
+	
+	<select id="getDailyCheck" resultType="com.mysite.msa_exam.dto.member.DailyCheckDTO">
+		SELECT	* FROM (
+			SELECT convert(nvarchar(16), a.mdc_reg_dt,121) as mdc_reg_dt
+			,ROW_NUMBER() OVER (ORDER BY a.mdc_reg_dt desc) AS rownum
+			,count(*) over() as totalcnt
+			FROM MS_MEM_DLYCHECKIN a WITH(NOLOCK) where 1=1 AND MDC_MEM_ID=#{mem_id}
+		) T
+		WHERE ROWNUM BETWEEN ((#{page}-1) * #{pageSize}) +1 AND #{page} * #{pageSize}
+		ORDER BY ROWNUM
+	</select>
+</mapper>

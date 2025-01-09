@@ -1,0 +1,28 @@
+* {box-sizing: border-box; margin: 0; padding: 0; line-height: 1.4; font-family: 'Noto Sans Thai', sans-serif; font-weight: 400; font-size: 12px;}
+input::-webkit-input-placeholder{color:#999; font-size:inherit;}
+ul, li {list-style: none;}
+a {color: inherit; text-decoration: none;}
+
+b, strong, h1, h2, h3, h4, h5, h6 {font-weight: 700;}
+table, tr, td, th {
+	border:1px solid black;
+	border-collapse: collapse;
+}
+th, td {padding:10px;}
+
+.pagination {text-align: center; margin-top: 20px;}
+.pagination a {width: 30px; height: 30px; line-height: 28px; text-align: center; border: solid 1px #ddd; font-size: 12px;}
+.pagination > a {display: inline-block; vertical-align: middle; text-indent: -9999px; margin: 0 2px;}
+.pagination > a.first {background: url('https://img.megastudyth.com/common/paging_first.png') no-repeat center center / 12px auto;}
+.pagination > a.prev {background: url('https://img.megastudyth.com/common/paging_prev.png') no-repeat center center / 12px auto;}
+.pagination > a.next {background: url('https://img.megastudyth.com/common/paging_next.png') no-repeat center center / 12px auto;}
+.pagination > a.last {background: url('https://img.megastudyth.com/common/paging_last.png') no-repeat center center / 12px auto;}
+.pagination > a.disabled {opacity: 0.3;}
+.pagination ul {display: inline-block; vertical-align: middle; margin: 0 10px; height: 30px;}
+.pagination ul:after {content: ''; display: table; clear: both;}
+.pagination ul li {float: left; margin-right: 5px;}
+.pagination ul li:last-child {margin-right: 0;}
+.pagination ul li a {display: block;}
+.pagination ul li a.on {font-weight: 700; color: #007af3;}
+
+.valied {font-weight:bold;color:#ff0000;}

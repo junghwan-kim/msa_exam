@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Subject Enrollment</title>
+<style>
+.error-box {border:1px solid red;}
+.error-class {font-weight:bold;color:#ff0000;}
+</style>
+</head>
+<body>
+	<div class="msa-pop__top">
+		<h3>Subject Enrollment</h3>
+		<button type="button" class="msa-pop__close" onclick="javascript:self.close();">닫기</button>
+	</div>
+	<form method="post" name="myform" th:object="${subjectFormDTO}" action="/subject/sub_act">
+		<input type="hidden" name="method" th:value="*{method}">
+		<input type="hidden" name="old_subcd" th:value="*{old_subcd}">
+		<input type="hidden" name="page" th:value="*{page}">
+		<table class="msa-tb" ID="Table1">
+			<tr>
+				<th>Selcet domain</th>
+				<td>4로세팅</td>
+			</tr>
+			<tr>
+				<th>Subject code</th>
+				<td class="tal">
+					<input type="text" size=5 maxlength=2 th:field="*{subcd}" th:errorclass="error-box">&nbsp;Enter 2 digits (example : 01, 99...)
+					<div class="error-class" th:errors="*{subcd}"></div>
+				</td>
+				
+			</tr>
+			<tr>
+				<th>Subject name</th>
+				<td class="tal">
+					<input type="text" size=40 maxlength=60 th:field="*{subnm}" th:errorclass="error-box">
+					<div class="error-class" th:errors="*{subnm}"></div>
+				</td>
+			</tr>
+			<tr>
+				<th>Subject name(VIEW)</th>
+				<td class="tal"><input type="text" size=40 maxlength=60 th:field="*{subvw}"></td>
+			</tr>
+			<tr>
+				<th>Target</th>
+				<td class="tal">
+					<input type="radio" id="sub_tg4" value="4" name="sub_tg" th:checked="*{sub_tg == 4}"><label for="sub_tg4">Student</label>&nbsp;&nbsp;&nbsp;
+					<input type="radio" id="sub_tg5" value="5" name="sub_tg" th:checked="*{sub_tg == 5}"><label for="sub_tg5">Civil Service</label>
+				</td>
+			</tr>
+			<tr>
+				<th>classify</th>
+				<td class="tal">
+					<select id="subkbn" NAME="subkbn">
+						<option th:each="kbn : ${kbnList}" th:value="${kbn.CC_COMM_CD}" th:selected="(${kbn.CC_COMM_CD} == *{subkbn})">[[${kbn.CC_KOR_NM}]]</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+		<div class="msa-info bot">
+			<ul>
+				<li><input type="button" value="Cancle" onclick="javascript:self.close();" class="msa-btn"></li>
+				<li><input type="button" value="confirm" onclick="javascript:fncOk();" id=button1 name=button1 class="msa-btn blu"></li>
+			</ul>
+		</div>
+	</form>
+	<script th:inline="javascript">
+	const method = [[${method}]];
+	const page = [[${page}]];
+	const success = [[${success}]];
+	
+	function fncOk(){
+		myform.submit();
+	}
+	
+	function isEmpty(value){
+		if(value == "" || value == null || value == undefined || ( value != null && typeof value == "object" && !Object.keys(value).length)){
+		  return true
+		}else{
+		  return false
+		}
+	};
+	
+	function init(){	
+		console.log(success)
+		if(!isEmpty(success) && success == 1){
+			alert("Has been processed.");
+			opener.location.href = "/subject/list?page="+page;
+			self.close();
+		}
+	}
+	init();
+	</script>
+</body>
+</html>

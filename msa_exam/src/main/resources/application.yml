@@ -1,0 +1,34 @@
+# server port
+server:
+ port: 8092
+
+ 
+pagehelper:
+ helper-dialect: sqlserver # DB 종류
+ reasonable: true  # true 일시 0 <= pageNum <= pages 로 실행
+ support-methods-arguments: true # true이면 mapper에서 page parameter 사용가능
+
+
+# database
+spring:
+  main:
+   allow-circular-references: true             # 순환 참조
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:sqlserver://10.201.0.210;databaseName=MegaThai_20240605;encrypt=true;trustServerCertificate=true
+    username: MegaWeb
+    password: apRkdnpq!9
+  thymeleaf:
+    cache: false
+  jpa:
+    database-platform: org.hibernate.dialect.SQLServerDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update       
+
+# mybatis
+mybatis: 
+  mapper-locations: classpath:mapper/*.xml
+  config-location: classpath:mybatis-config.xml
+  type-aliases-package: com.mysite.msa_exam.dto

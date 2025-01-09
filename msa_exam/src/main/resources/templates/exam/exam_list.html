@@ -1,0 +1,88 @@
+<html layout:decorate="~{layout}">
+<div id="wrap" layout:fragment="content">
+	<a href="/">index</a>
+	<a id="btnEnroll" href="javascript:void(0);" class="msa-btn blu upa_ctrl1">enrollment</a>
+	<br/><br/>
+	<p>post : <b th:text="${totalCnt}"></b></p>
+	<table>
+		<colgroup>
+			<col width="60px" />
+			<col width="100px" />
+			<col width="*" />
+			<col width="*" />
+			<col width="100px" />				
+			<col width="90px" />
+			<col width="90px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th>no.</th>
+		    <th>Exam code</th>
+		    <th>Exam name</th>
+		    <th>Exam name (KR)</th>
+		    <th>Activity</th>                    
+		    <th>modify</th>
+		    <th>delete</th>
+		</tr>
+		</thead>
+		<tbody>
+			<tr th:each="exam, loop : ${examList}">
+		       <td th:text="${totalCnt - ((currentPage-1) * pageSize) - loop.index}"></td>
+		       <td th:text="${exam.em_cd}"></td>
+		       <td><a th:href="@{|/exam/exam_cate/${exam.em_cd}|}" th:text="${exam.em_nm}"></a></td>
+		       <td th:text="${exam.em_nm_kr}"></td>
+		       <td th:text="${exam.em_view_yn}"></td>
+		       <td><a href="javascript:void(0);" th:onclick="fncModify([[${exam.em_cd}]], [[${exam.em_nm}]], [[${exam.em_nm_kr}]], [[${exam.em_view_yn}]]);">modify</a></td>
+		       <td><a href="javascript:void(0);" th:onclick="fncDelete([[${exam.em_cd}]]);">delete</a></td>
+		   </tr>
+		</tbody>    
+	</table>
+	<div class="pagination">
+		<th:block th:if="${pagination.getTotalListCnt() != 0}">
+			<th:block th:if="${pagination.getPage() != 1}">
+				<a th:href="@{/{param1}(param1=${param1}, page=1)}" class="first"></a>
+				<a th:href="@{/{param1}(param1=${param1},page=${pagination.getPrev()})}" class="prev"></a>
+			</th:block>
+		</th:block>
+		<ul th:each="page: ${#numbers.sequence(pagination.getStartPage(), pagination.getEndPage())}">	
+			<li>
+				<a th:if="${page == pagination.getPage()}" th:text="${page}" class="on"></a>
+				<a th:unless="${page == pagination.getPage()}" th:text="${page}" th:href="@{/{param1}(param1=${param1},page=${page})}"></a>
+			</li>
+		</ul>	
+		<th:block th:if="${pagination.getTotalListCnt() != 0}">
+			<th:block th:if="${pagination.getPage() != pagination.totalPageCnt}">
+				<a th:href="@{/{param1}(param1=${param1},page=${pagination.getNext()})}" class="next"></a>
+				<a th:href="@{/{param1}(param1=${param1},page=${pagination.getTotalPageCnt()})}" class="last"></a>
+			</th:block>
+		</th:block>	
+	</div>
+	<form name="delfrm" action="/exam/delete" method="post">
+		<input type="hidden" name="em_cd" id="em_cd" />
+	</form>
+	<script layout:fragment="script" type='text/javascript'>
+	
+	const page = [[${currentPage}]];
+	const enrollBtn = document.querySelector("#btnEnroll");
+	
+	enrollBtn.addEventListener("click",()=>{
+		var f = window.open("/exam/pop/exam?mode=INS" , "exam_pop", "scrollbars=no,width=600, height=400");
+        f.focus();
+        return false;
+	});
+	
+	function fncModify(v, em, em_k, yn){
+		window.open("/exam/pop/exam?mode=UPD&em_cd="+v+"&em_nm="+em+"&em_nm_kr="+em_k+"&em_view_yn="+yn+"&page="+page , "exam_pop", "scrollbars=no,width=600, height=400");
+		return false;
+	}
+	
+	function fncDelete(v){
+		if(confirm("시험을 삭제하겠습니까?")){
+			var f = document.delfrm;
+			f.em_cd.value=v;
+			f.submit();
+		}		
+	}
+	</script>
+</div>
+</html>

@@ -1,0 +1,126 @@
+<html layout:decorate="~{layout}">
+<div id="wrap" layout:fragment="content">
+	<a href="/">index</a>
+	<br /><br>
+	<button onclick="newproc();" class="msa-btn blu upa_ctrl1">enrollment</button>
+	<br>
+	<p>post : <b th:text="${totalCnt}"></b></p>
+	<table class="msa-tb list">
+		<colgroup>
+			<col width="100px" />
+			<col width="*" />
+			<col width="*" />
+			<col width="*" />
+			<col width="*" />
+			<col width="*" />
+			<col width="*" />
+			<col width="*" />
+			<col width="100px" />
+			<col width="80px" />
+			<col width="80px" />
+		</colgroup>
+		<thead>
+			<tr>
+				<th>Domain name</th>
+				<th>Subject code <a href="javascript:fnc_sort('sm_sub_cd','asc');">▲</a><a href="javascript:fnc_sort('sm_sub_cd','desc');">▼</a></th>
+				<th>Subject name <a href="javascript:fnc_sort('sm_sub_nm','asc');">▲</a><a href="javascript:fnc_sort('sm_sub_nm','desc');">▼</a></th>
+				<th>Subject name(VIEW)</th>
+				<th>classify</th>
+				<th>target</th>
+				<th>Enrollment date</th>
+				<th>Last Modified Date</th>
+				<th>Activity</th>
+				<th>Modify</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:unless="${#strings.isEmpty(subjectList)}"  th:each="subject, loop : ${subjectList}">
+				<td th:text="${subject.dm_dom_nm}"></td>
+				<td th:text="${subject.sm_sub_cd}"></td>
+				<td th:text="${subject.sm_sub_nm}"></td>
+				<td th:text="${subject.sm_view_nm}"></td>
+				<td th:text="${subject.cc_kor_nm}"></td>
+				<td th:text="${subject.sm_tg_tp == '5'} ? 'Civil service' : 'Student'"></td>
+				<td th:text="${#strings.substring(subject.sm_reg_dt, 0, 10)}"></td>
+				<td th:text="${#strings.substring(subject.sm_upd_dt, 0, 10)}"></td>
+				<td th:text="${subject.sm_view_yn}"></td>
+				<td><a href="javascript:void(0);" th:onclick="fncModify(4, [[${subject.sm_sub_cd}]], [[${subject.sm_sub_nm}]], [[${subject.cc_kor_nm}]], [[${subject.sm_view_nm}]], [[${subject.sm_tg_tp}]]);">modify</a></td>
+				<td></td>
+			</tr>
+			<tr th:if="${#strings.isEmpty(subjectList)}">
+		   		<td colspan="11">데이터가 없습니다</td>
+		   </tr>
+		</tbody>
+	</table>
+	<div class="pagination">
+		<th:block th:if="${pagination.getTotalListCnt() != 0}">
+			<th:block th:if="${pagination.getPage() != 1}">
+				<a th:href="|javascript:fnc_pageMove('1')|" class="first"></a>
+				<a th:href="|javascript:fnc_pageMove('${pagination.getPrev()}')|" class="prev"></a> 
+			</th:block>
+		</th:block>
+		<ul th:each="page: ${#numbers.sequence(pagination.getStartPage(), pagination.getEndPage())}">	
+			<li>
+				<a th:if="${page == pagination.getPage()}" th:text="${page}" class="on"></a>
+				<a th:unless="${page == pagination.getPage()}" th:text="${page}" th:href="|javascript:fnc_pageMove('${page}')|"></a> 
+			</li>
+		</ul>	
+		<th:block th:if="${pagination.getTotalListCnt() != 0}">
+			<th:block th:if="${pagination.getPage() != pagination.totalPageCnt}">
+				<a th:href="|javascript:fnc_pageMove('${pagination.getNext()}')|" class="next"></a>
+				<a th:href="|javascript:fnc_pageMove('${pagination.getTotalPageCnt()}')|" class="last"></a>
+			</th:block>
+		</th:block>	
+	</div>
+	<form name="pageFrm" action="/subject/list" method="get">
+		<input type="hidden" name="odr" id="odr" th:value="${odr}" /> 
+		<input type="hidden" name="srt" id="srt" th:value="${srt}" />
+		<input type="hidden" name="page" id="page" th:value="${currentPage}" />
+	</form>
+	<script layout:fragment="script" type='text/javascript'>
+		function fnc_pageMove(page){
+		   var f = document.pageFrm;
+		   f.page.value = page;
+		   f.submit();
+		   console.log(page)
+		}
+		
+		function fnc_sort(a, b){
+			var f = document.pageFrm;
+			f.odr.value = a;
+			f.srt.value = b;
+			f.submit();
+		}
+		
+		function fncModify(domcd,subcd,subnm,subkbn,subvw,subtg){
+			var nWidth = "500";
+			var nHeight = "460";
+			var xPos = (document.body.clientWidth / 2) - (nWidth / 2); 
+			xPos += window.screenLeft;	 //듀얼 모니터
+			var yPos = (screen.availHeight / 2) - (nHeight / 2);
+			
+			url = "/subject/sub_act?method=upd";
+			url = url + "&domcd=" + domcd;
+			url = url + "&subcd=" + subcd;
+			url = url + "&subnm=" + subnm;
+			url = url + "&subkbn=" + subkbn;
+			url = url + "&subvw=" + subvw;
+			url = url + "&subtg=" + subtg;
+			url = url + "&page=" + [[${currentPage}]];
+			
+			window.open(url,"과목수정","width="+nWidth+",height="+nHeight+", left="+xPos+", top="+yPos+", toolbars=no, resizable=no, scrollbars=no");return;
+		}
+		
+		function newproc(){
+			url = "/subject/sub_act?method=new";
+			var nWidth = "600";
+			var nHeight = "460";
+			var xPos = (document.body.clientWidth / 2) - (nWidth / 2); 
+			xPos += window.screenLeft;	 //듀얼 모니터
+			var yPos = (screen.availHeight / 2) - (nHeight / 2);
+			window.open(url,"과목추가","width="+nWidth+",height="+nHeight+", left="+xPos+", top="+yPos+", toolbars=no, resizable=no, scrollbars=no");
+		}
+	</script>
+</div>
+</html>

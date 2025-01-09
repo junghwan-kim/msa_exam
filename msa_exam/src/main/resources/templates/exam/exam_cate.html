@@ -1,0 +1,99 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content">
+	<a href="/exam/list">list</a>
+	<a id="btnEnroll" href="javascript:void(0);" class="msa-btn blu upa_ctrl1">enrollment</a>
+	<br/><br/>
+	<p>post : <b th:text="${totalCnt}"></b></p>
+	<table>
+		<colgroup>
+			<col width="60px" />
+			<col width="150px" />
+			<col width="140px" />
+			<col width="*" />
+			<col width="*" />
+			<col width="120px" />
+			<col width="130px" />		
+			<col width="*" />						
+			<col width="80px" />
+			<col width="80px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th>no.</th>
+		    <th>Exam name</th>
+		    <th>Exam<br>category code</th>
+		    <th>Exam<br>category</th>
+		    <th>Part of Exam</th>                    
+		    <th>Official Exam No</th>
+		    <th>Exam<br>classify (KO)</th>
+		    <th>Exam<br>category (KO)</th>
+		    <th>modify</th>
+		    <th>delete</th>
+		</tr>
+		</thead>
+		<tbody>
+			<tr th:unless="${#strings.isEmpty(examCateList)}" th:each="cate, loop : ${examCateList}">
+		       <td th:text="${totalCnt - ((currentPage-1) * pageSize) - loop.index}"></td>
+		       <td th:text="${cate.em_nm}"></td>
+		       <td th:text="${cate.ec_cd}"></td>
+		       <td th:text="${cate.ec_nm}"></td>
+		       <td th:text="${cate.ec_part_nm}"></td>
+		       <td th:text="${cate.ec_offical_no}"></td>
+		       <td th:text="${cate.cc_kor_nm}"></td>
+		       <td th:text="${cate.ec_nm_kr}"></td>
+		       <td><a href="javascript:void(0);" th:onclick="fncModify([[${cate.ec_cd}]], [[${cate.ec_em_cd}]], [[${cate.ec_nm}]], [[${cate.ec_nm_kr}]], [[${cate.ec_part_nm}]], [[${cate.ec_offical_no}]], [[${cate.ec_classify_no}]]);">modify</a></td>
+		       <td><a href="javascript:void(0);" th:onclick="fncDelete([[${cate.ec_cd}]]);">delete</a></td>
+		   </tr>
+		   <tr th:if="${#strings.isEmpty(examCateList)}">
+		   		<td colspan="10">데이터가 없습니다</td>
+		   </tr>
+		</tbody>    
+	</table>
+	<div class="pagination">
+		<th:block th:if="${pagination.getTotalListCnt() != 0}">
+			<th:block th:if="${pagination.getPage() != 1}">
+				<a th:href="@{/{param1}(param1=${param1}, page=1)}" class="first"></a>
+				<a th:href="@{/{param1}(param1=${param1},page=${pagination.getPrev()})}" class="prev"></a>
+			</th:block>
+		</th:block>
+		<ul th:each="page: ${#numbers.sequence(pagination.getStartPage(), pagination.getEndPage())}">	
+			<li>
+				<a th:if="${page == pagination.getPage()}" th:text="${page}" class="on"></a>
+				<a th:unless="${page == pagination.getPage()}" th:text="${page}" th:href="@{/{param1}(param1=${param1},page=${page})}"></a>
+			</li>
+		</ul>	
+		<th:block th:if="${pagination.getTotalListCnt() != 0}">
+			<th:block th:if="${pagination.getPage() != pagination.totalPageCnt}">
+				<a th:href="@{/{param1}(param1=${param1},page=${pagination.getNext()})}" class="next"></a>
+				<a th:href="@{/{param1}(param1=${param1},page=${pagination.getTotalPageCnt()})}" class="last"></a>
+			</th:block>
+		</th:block>	
+	</div>
+	<form name="delfrm" action="/exam/exam_cate/delete" method="post">
+		<input type="hidden" name="ec_cd" id="ec_cd" />
+		<input type="hidden" name="em_cd" id="em_cd" />
+	</form>
+	<script layout:fragment="script" type='text/javascript'>
+	const page = [[${currentPage}]];
+	const enrollBtn = document.querySelector("#btnEnroll");
+	const ec_em_cd = [[${ec_em_cd}]];
+	enrollBtn.addEventListener("click",()=>{
+		var f = window.open("/exam/pop/exam_cate?mode=INS_CATE&ec_em_cd="+ec_em_cd , "exam_cate_pop", "scrollbars=no,width=600, height=550");
+        f.focus();
+        return false;
+	});
+	function fncModify(v, v2, nm, nm_k, part_nm, off_no, cls_no){
+		window.open("/exam/pop/exam_cate?mode=UPD_CATE&ec_cd="+v+"&ec_em_cd="+v2+"&ec_nm="+nm+"&ec_nm_kr="+nm_k+"&ec_part_nm="+part_nm+"&ec_offical_no="+off_no+"&ec_classify_no="+cls_no+"&page="+page , "exam_cate_pop", "scrollbars=no,width=600, height=400");
+		return false;
+	}
+	function fncDelete(v){
+		if(confirm("시험 카테고리를 삭제하겠습니까?")){
+			var f = document.delfrm;
+			f.ec_cd.value=v;
+			f.em_cd.value=ec_em_cd;
+			f.submit();
+		}		
+	}
+	</script>
+</div>
+</html>

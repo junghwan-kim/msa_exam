@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mysite.msa_exam.dao.ExamMapper">
+	<select id="getExamList" resultType="com.mysite.msa_exam.dto.exam.ExamDTO">
+		SELECT	* FROM (
+			select em_cd, em_nm, em_nm_kr, em_view_yn, convert(nvarchar(16), em_reg_dt, 121) as  em_reg_dt 
+			,row_number() over(order by em_reg_dt desc) as rownum
+			,count(*) over() as totalcnt
+			from ms_exam_mas with(nolock) where 1=1
+		) T
+		WHERE ROWNUM BETWEEN ((#{pageNum}-1) * #{pageSize}) +1 AND #{pageNum} * #{pageSize}
+		ORDER BY ROWNUM
+	</select>
+	
+	<select id="findAll" resultType="com.mysite.msa_exam.dto.exam.ExamDTO">
+		SELECT	* FROM (
+			select em_cd, em_nm, em_nm_kr, em_view_yn, convert(nvarchar(16), em_reg_dt, 121) as  em_reg_dt 
+			,row_number() over(order by em_reg_dt desc) as rownum
+			,count(*) over() as totalcnt
+			from ms_exam_mas with(nolock) where 1=1
+		) T
+		WHERE ROWNUM BETWEEN ((#{page}-1) * #{pageSize}) +1 AND #{page} * #{pageSize}
+		ORDER BY ROWNUM
+	</select>
+	
+	<select id="getExamCate" resultType="com.mysite.msa_exam.dto.exam.ExamCateDTO">
+		SELECT	* FROM (
+			SELECT EC_CD, EC_EM_CD, EM_NM, EC_NM, EC_PART_NM, EC_OFFICAL_NO, CC_KOR_NM, EC_NM_KR, EC_CLASSIFY_NO 
+			, ROW_NUMBER() OVER (ORDER BY EC_CD ASC)AS ROWNUM, COUNT(*) OVER() AS TotalCnt  
+			FROM MS_EXAM_CATE WITH(NOLOCK)  
+				JOIN MS_EXAM_MAS WITH(NOLOCK) ON EM_CD=EC_EM_CD 
+				JOIN MS_COMM_CD WITH(NOLOCK) ON CC_COMM_KIND='EX1' AND CC_COMM_CD=EC_CLASSIFY_NO 
+			WHERE EM_VIEW_YN=N'Y' AND EC_EM_CD=#{em_cd}
+		) T
+		WHERE ROWNUM BETWEEN ((#{page}-1) * #{pageSize}) +1 AND #{page} * #{pageSize}
+		ORDER BY ROWNUM
+	</select>
+	
+	<insert id="examSave" parameterType="com.mysite.msa_exam.dto.exam.ExamFormDTO" useGeneratedKeys="true" keyProperty="em_cd">
+		INSERT INTO MS_EXAM_MAS (EM_DOM_CD,EM_NM,EM_NM_KR,EM_VIEW_YN,EM_REG_DT)
+		VALUES (4, #{em_nm}, #{em_nm_kr}, #{em_view_yn}, GETDATE())
+	</insert>
+	
+	<insert id="examCateSave" parameterType="com.mysite.msa_exam.dto.exam.ExamCateFormDTO" useGeneratedKeys="true" keyProperty="ec_cd">
+		INSERT INTO MS_EXAM_CATE (EC_EM_CD,EC_NM,EC_NM_KR,EC_PART_NM,EC_OFFICAL_NO,EC_CLASSIFY_NO,EC_REG_DT)
+		VALUES (#{ec_em_cd}, #{ec_nm}, #{ec_nm_kr}, #{ec_part_nm}, #{ec_offical_no}, #{ec_classify_no}, GETDATE())
+	</insert>
+	
+	<update id="examUpdate" parameterType="com.mysite.msa_exam.dto.exam.ExamFormDTO">
+		UPDATE MS_EXAM_MAS SET
+			EM_NM=#{em_nm}
+			,EM_NM_KR=#{em_nm_kr}
+			,EM_VIEW_YN=#{em_view_yn}
+		WHERE EM_CD=#{em_cd}
+	</update>
+	
+	<update id="examCateUpdate" parameterType="com.mysite.msa_exam.dto.exam.ExamCateFormDTO">
+		UPDATE MS_EXAM_CATE SET
+			EC_NM=#{ec_nm}
+			,EC_NM_KR=#{ec_nm_kr}
+			,EC_PART_NM=#{ec_part_nm}
+			,EC_OFFICAL_NO=#{ec_offical_no}
+			,EC_CLASSIFY_NO=#{ec_classify_no}
+		WHERE EC_EM_CD=#{ec_em_cd} AND EC_CD=#{ec_cd}
+	</update>
+	
+	<delete id="examDelete" parameterType="int">
+		DELETE FROM MS_EXAM_MAS WHERE EM_CD=#{em_cd}
+	</delete>
+	
+	<delete id="examCateDelete" parameterType="int">
+		DELETE FROM MS_EXAM_CATE WHERE EC_CD=#{ec_cd}
+	</delete>
+	
+</mapper>

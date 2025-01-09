@@ -1,0 +1,82 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content">
+	<a href="/course_group/list">list</a>
+	<br />
+	<form method="post" name="myform">
+		<table class="msa-tb">
+	        <colgroup>
+	            <col width="18%" />
+	            <col width="*" />
+	        </colgroup>
+	        <tbody>
+	            <tr>
+	                <th class="tal">Course group code</th>
+	                <td class="tal">d
+	                </td>
+	            </tr>
+	            <tr>
+	                <th class="tal">Course group name<span class="red">*</span></th>
+	                <td class="tal"><input type="text" name="cgm_nm" id="cgm_nm" size="100" /></td>
+	            </tr>
+	            <tr>
+	                <th class="tal">Description<span class="red">*</span></th>
+	                <td class="tal"><input type="text" name="cgm_memo" id="cgm_memo" size="100" /></td>
+	            </tr>
+	            <tr>
+	                <th class="tal">Classification</th>
+	                <td class="tal">
+	                    <select name="sel_class" id="sel_class" onchange="chgselBox(this.value,'selSub','sltExamCate')">
+	                        <option value="">-Select-</option>
+	                        <option value="1">Grade</option>
+	                        <option value="2">Exam</option>
+	                        <option value="3">Subject</option>
+	                        <option value="4">Tutor</option>
+	                        <option value="5">Step</option>
+	                    </select>
+	                    &nbsp;	
+	                    <select name="selSub" id="selSub" value="" onchange="chgselBox2(this,'sltExamCate')" >
+							<option value="">-Select-</option>
+	                    </select>	
+	                    &nbsp;
+	                    <select name="exam_cate_cd" id="sltExamCate" onchange="chgselBox3(this)">
+	                        <option value="">-Select-</option>
+	                    </select>
+	
+	                    
+	                    <input type="hidden" name="grd_flg" value="" />
+	                    <input type="hidden" name="chkValue" id="chkValue" value="" />
+	                    <input type="hidden" name="chkValueECCD" id="chkValueECCD" value="" />
+	                    
+	                    <ul class="list-chk" id="chkGrdFlg" style="margin-top:8px;display:none;">
+	                   <li><input type="checkbox" name="grd_flg_e4" id="grd_flg_e4" class="gbn_chk" data-grdflgvalue="4" onclick="chkGrd(this, 4);" value="Y"><label for="grd_flg_e4">ป.4</label></li>
+	                   <li><input type="checkbox" name="grd_flg_e5" id="grd_flg_e5" class="gbn_chk" data-grdflgvalue="5" onclick="chkGrd(this, 5);" value="Y"><label for="grd_flg_e5">ป.5</label></li>
+	                   <li><input type="checkbox" name="grd_flg_e6" id="grd_flg_e6" class="gbn_chk" data-grdflgvalue="6" onclick="chkGrd(this, 6);" value="Y"><label for="grd_flg_e6">ป.6</label></li>
+	                   <li><input type="checkbox" name="grd_flg1" id="grd_flg1" class="gbn_chk" data-grdflgvalue="7" onclick="chkGrd(this, 7);" value="Y"><label for="grd_flg1">ม.1</label></li>
+	                   <li><input type="checkbox" name="grd_flg2" id="grd_flg2" class="gbn_chk" data-grdflgvalue="8" onclick="chkGrd(this, 8);" value="Y"><label for="grd_flg2">ม.2</label></li>
+	                   <li><input type="checkbox" name="grd_flg3" id="grd_flg3" class="gbn_chk" data-grdflgvalue="9" onclick="chkGrd(this, 9);" value="Y"><label for="grd_flg3">ม.3</label></li>
+	                   <li><input type="checkbox" name="grd_flg4" id="grd_flg4" class="gbn_chk" data-grdflgvalue="10" onclick="chkGrd(this, 10);" value="Y"><label for="grd_flg4">ม.4</label></li>
+	                   <li><input type="checkbox" name="grd_flg5" id="grd_flg5" class="gbn_chk" data-grdflgvalue="11" onclick="chkGrd(this, 11;" value="Y"><label for="grd_flg5">ม.5</label></li>
+	                   <li><input type="checkbox" name="grd_flg6" id="grd_flg6" class="gbn_chk" data-grdflgvalue="12" onclick="chkGrd(this, 12);" value="Y"><label for="grd_flg6">ม.6</label></li>
+	               </ul>
+	 
+	           </td>
+	       </tr>
+	       <tr>
+	           <th class="tal">Included course<span class="red">*</span></th>
+	           <td class="tal"><span id="courseCnt">13</span>&nbsp;&nbsp;<a href="javascript:Fn_chr_pop(<%=CGM_CD%>);">course list ></a></td>
+	       </tr>
+	       <tr>
+	           <th class="tal">Open status<span class="red">*</span></th>
+	           <td class="tal">
+	               <ul class="list-chk" style="display: inline-block; vertical-align: middle;">
+	                    <li><input type="radio" name="view_yn" id="view_yn_y" value="Y"><label for="view_yn_y">Y</label></li>
+	                    <li><input type="radio" name="view_yn" id="view_yn_n" value="N"><label for="view_yn_n">N</label></li>
+	                </ul>
+	            </td>
+	        </tr>
+
+	    </tbody>
+	</table>
+	</form>
+</div>
+</html>

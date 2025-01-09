@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Exam registration</title>
+<style>
+
+.error-box {border:1px solid red;}
+.error-class {font-weight:bold;color:#ff0000;}
+</style>
+</head>
+<body>
+	<button type="button" class="msa-pop__close" onclick="javascript:self.close();">닫기</button>
+	<form method="post" name="formi" th:object="${examFormDTO}" action="/exam/pop/exam" onsubmit="return check_form();">
+		<input type="hidden" name="mode" id="mode" th:value="*{mode}" />
+		<input type="hidden" name="page" id="page" th:value="*{page}" />
+		<input type="hidden" name="em_cd" id="em_cd" th:value="*{em_cd}" />
+		<table class="msa-tb fixed">
+			<colgroup>
+				<col width="140px" />
+				<col width="*" />
+			</colgroup>
+			<tr>
+				<th>Exam name</th>
+				<td class="tal">
+					<input type="text" th:field="*{em_nm}" size="50" th:errorclass="error-box">
+					<div class="error-class" th:errors="*{em_nm}"></div>
+				</td>
+			</tr>
+            <tr>
+				<th>Exam name (kr)</th>
+				<td class="tal">
+					<input type="text" th:field="*{em_nm_kr}" size="50">
+				</td>
+			</tr>			
+			<tr>
+				<th>Activity</th>
+				<td class="tal">
+					<select name="em_view_yn">
+						<option value="Y" th:selected="*{em_view_yn == 'Y'}">Y</option>
+						<option value="N" th:selected="*{em_view_yn == 'N'}">N</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+	</form>
+	
+	<div class="msa-info bot">
+		<ul>
+			<li><input type="button" value="Cancel" onclick="javascript:self.close();"  class="msa-btn"></li>
+			<li><input type="button" value="Enrollment" onclick="javascript:check_form();" name=btnSubmit  class="msa-btn blu"></li>
+		</ul>
+	</div>
+ 	<script th:inline="javascript">
+ 		const mode = [[${mode}]];
+ 		const em_cd = [[${em_cd}]];
+ 		const page = [[${page}]];
+ 		 		
+ 		function check_form(){
+ 			formi.submit();
+ 		}
+ 		function isEmpty(value){
+			if(value == "" || value == null || value == undefined || ( value != null && typeof value == "object" && !Object.keys(value).length)){
+			  return true
+			}else{
+			  return false
+			}
+		};
+		
+		function init(){	
+			if(!isEmpty(em_cd) && em_cd !== 0){
+				alert("Has been processed.");
+				opener.location.href = "/exam/list?page="+page;
+				self.close();
+			}
+		}
+		init();
+	</script>
+</body>
+</html>

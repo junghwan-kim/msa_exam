@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Exam Category registration</title>
+<style>
+.error-box {border:1px solid red;}
+.error-class {font-weight:bold;color:#ff0000;}
+</style>
+</head>
+<body>
+	<button type="button" class="msa-pop__close" onclick="javascript:self.close();">닫기</button>
+	<form method="post" name="formi" th:object="${examCateFormDTO}" action="/exam/pop/exam_cate" onsubmit="return check_form();">
+		<input type="hidden" name="mode" id="mode" th:value="*{mode}" />
+		<input type="hidden" name="page" id="page" th:value="*{page}" />
+		<input type="hidden" name="ec_em_cd" id="ec_em_cd" th:value="*{ec_em_cd}" />
+		<input type="hidden" name="ec_cd" id="ec_cd" th:value="*{ec_cd}" />
+		<table class="msa-tb fixed">
+			<colgroup>
+				<col width="140px" />
+				<col width="*" />
+			</colgroup>
+			<tr>
+				<th>category name</th>
+				<td class="tal">
+					<input type="text" th:field="*{ec_nm}" size="50" th:errorclass="error-box">
+					<div class="error-class" th:errors="*{ec_nm}"></div>
+				</td>
+			</tr>
+            <tr>
+				<th>category name (kr)</th>
+				<td class="tal">
+					<input type="text" th:field="*{ec_nm_kr}" size="50">
+				</td>
+			</tr>	
+			<tr>
+				<th>part name</th>
+				<td class="tal">
+					<input type="text" th:field="*{ec_part_nm}" size="50">
+				</td>
+			</tr>		
+			<tr>
+				<th>offical no</th>
+				<td class="tal">
+					<input type="text" th:field="*{ec_offical_no}" size="50">
+				</td>
+			</tr>	
+			<tr>
+				<th>classify no</th>
+				<td class="tal">
+					<select name="ec_classify_no">
+						<option value="1" th:selected="*{ec_classify_no == '1'}">1</option>
+						<option value="2" th:selected="*{ec_classify_no == '2'}">2</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+	</form>
+	
+	<div class="msa-info bot">
+		<ul>
+			<li><input type="button" value="Cancel" onclick="javascript:self.close();"  class="msa-btn"></li>
+			<li><input type="button" value="Enrollment" onclick="javascript:check_form();" name=btnSubmit  class="msa-btn blu"></li>
+		</ul>
+	</div>
+ 	<script th:inline="javascript">
+ 		const mode = [[${mode}]];
+ 		const ec_em_cd = [[${ec_em_cd}]];
+		const ec_cd = [[${ec_cd}]];
+		const page = [[${page}]];
+		
+ 		function check_form(){
+ 			formi.submit();
+ 		}
+ 		function isEmpty(value){
+			if(value == "" || value == null || value == undefined || ( value != null && typeof value == "object" && !Object.keys(value).length)){
+			  return true
+			}else{
+			  return false
+			}
+		};
+		function init(){	
+			if(!isEmpty(ec_cd) && ec_cd !== 0){
+				alert("Has been processed.");
+				opener.location.href = "/exam/exam_cate/"+ec_em_cd+"?page="+page;
+				self.close();
+			}
+		}
+		init();
+	</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mysite.msa_exam.dao.SubjectMapper">
+	<select id="subjectList" resultType="com.mysite.msa_exam.dto.subject.subjectDTO">
+		SELECT	* FROM (
+			SELECT SM_DOM_CD, DM_DOM_NM, SM_SUB_CD, SM_SUB_NM, CC_KOR_NM, SM_REG_DT, SM_UPD_DT
+			, SM_SEL_TYPE, SM_VIEW_NM, SM_VIEW_YN, SM_SUB_TYPE, ISNULL(SM_TG_TP,'4') AS SM_TG_TP 
+			,ROW_NUMBER() OVER(ORDER BY ${orderInfo}) AS rownum
+			,count(*) over() as totalcnt
+			FROM MS_SUB_MAS WITH(NOLOCK) LEFT JOIN MS_DOM_MAS WITH(NOLOCK) ON SM_DOM_CD = DM_DOM_CD 
+				INNER JOIN MS_COMM_CD WITH(NOLOCK) ON CC_COMM_KIND = '12' AND SM_SEL_TYPE = CC_COMM_CD
+			WHERE 1=1
+		) T
+		WHERE ROWNUM BETWEEN ((#{page}-1) * #{pageSize}) +1 AND #{page} * #{pageSize}
+		ORDER BY ROWNUM
+	</select>
+	
+	<select id="getKbnData" resultType="map">
+		SELECT CC_COMM_CD, CC_KOR_NM FROM MS_COMM_CD WHERE CC_COMM_KIND = '12' ORDER BY 1
+	</select>
+	
+	<insert id="saveSubject" parameterType="com.mysite.msa_exam.dto.subject.SubjectFormDTO">
+		INSERT MS_SUB_MAS (SM_SUB_CD, SM_DOM_CD, SM_SUB_NM, SM_VIEW_NM, SM_VIEW_YN, SM_SEL_TYPE, SM_REG_DT, SM_TG_TP)
+		VALUES (#{subcd}, 4, #{subnm}, #{subvw}, 'Y', #{subkbn} , getdate(), #{sub_tg})
+	</insert>
+	
+	<update id="updateSubject" parameterType="com.mysite.msa_exam.dto.subject.SubjectFormDTO">
+		UPDATE MS_SUB_MAS SET
+			SM_SUB_NM=#{subnm}
+			,SM_VIEW_NM=#{subvw}
+			,SM_SEL_TYPE=#{subkbn}
+			,SM_UPD_DT=GETDATE()
+			,SM_TG_TP=#{sub_tg}
+		WHERE SM_DOM_CD=4 AND SM_SUB_CD=#{old_subcd}
+	</update>
+	
+</mapper>

@@ -1,0 +1,143 @@
+<html layout:decorate="~{layout}">
+<div id="wrap" layout:fragment="content">
+	<a href="/">index</a>
+	<form name="searchFrm" action="/course_group/list" method="get">
+		<input type="hidden" id="page" name="page" th:value="${currentPage}">
+		<table>
+			<colgroup>
+				<col width="60px" >
+				<col width="160px" >
+				<col width="80px" >
+				<col width="160px" >
+				<col width="*" >
+				<col width="80px" >
+				<col width="80px" >
+			</colgroup>
+			<tbody>
+				<tr>
+					<th>Classification</th>
+					<td>
+						<select name="schClassType" onchange="sch();">
+                             <option value="">-Select-</option>
+                             <option value="1" th:selected="${search.schClassType == '1'}">Grade</option>
+                             <option value="2" th:selected="${search.schClassType == '2'}">Exam</option>
+                             <option value="3" th:selected="${search.schClassType == '3'}">Subject</option>
+                             <option value="4" th:selected="${search.schClassType == '4'}">Tutor</option>
+                             <option value="5" th:selected="${search.schClassType == '5'}">Step</option>
+						</select>
+					</td>
+					<th>Open status</th>
+					<td>
+						<select name="schView" onchange="sch();">
+							<option value="">-Select-</option>
+							<option value="Y" th:selected="${search.schView == 'Y'}">Y</option>
+							<option value="N" th:selected="${search.schView == 'N'}">N</option>
+						</select>
+					</td>
+					<td>
+						<div class="msa-sch__bot">
+							<input type="text" name="schStr" th:value="${search.schStr}" class="msa-sch__bot--input">
+							<a onclick="sch();" class="msa-sch__bot--submit">Search</a>
+						</div>
+					</td>
+					<th></th>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+	<br /><br>
+	<a href="/course_group/chrgrp_ins?method=ins" class="msa-btn blu upa_ctrl1">enrollment</a>
+	<br>
+	<p>post : <b th:text="${totalCnt}"></b></p>
+	<table class="msa-tb list">
+		<colgroup>
+			<col width="120px" >
+			<col width="120px" >
+			<col width="400px" >
+			<col width="*" >
+			<col width="100px" >
+			<col width="120px" >
+			<col width="100px" >
+		</colgroup>
+		<thead>
+			<tr>
+				<th>Course<br />group code</th>
+				<th>Classification</th>
+				<th>Course group name</th>
+				<th>Description</th>
+				<th>Included<br />course</th>
+				<th>Open status</th>
+				<th>modify</th>
+			</tr>
+		</thead>
+		<tbody> 
+			<tr th:unless="${#strings.isEmpty(courseGroupList)}" th:each="grp, loop : ${courseGroupList}" th:style="${grp.cgm_st_type == '0' ? 'background-color:#AFE5E5;' : ''}">
+				<td th:text="${grp.cgm_grp_cd}"></td>
+				<td>
+					<th:block th:switch="${grp.cgm_cls}"> 
+					  <span th:case="1">Grade1</span> 
+					  <span th:case="2">Exam2</span> 
+					  <span th:case="3">Subject</span> 
+					  <span th:case="4">Tutor</span> 
+					  <span th:case="5">Step</span> 
+					  <span th:case="*">[[${grp.cgm_cls}]]</span>
+					</th:block>
+				</td>
+				<td th:text="${grp.cgm_nm}"></td>
+				<td th:text="${grp.cgm_memo}"></td>
+				<td th:text="${grp.chr_cnt}"></td>
+				<td th:text="${grp.cgm_view_yn}"></td>
+				<td>
+					<a th:href="|javascript:fnc_detail('upd', '${grp.cgm_cd}')|" th:if="${grp.cgm_st_type == '1'}">modify</a>
+					<a th:href="|/course_group/chrgrp_ins?method=view&cgm_cd=${grp.cgm_cd}&${strParams}|" th:unless="${grp.cgm_st_type == '1'}">View</a>
+				</td>
+			</tr>
+			<tr th:if="${#strings.isEmpty(courseGroupList)}">
+		   		<td colspan="7">데이터가 없습니다</td>
+		   </tr>
+		 </tbody>
+		</table>
+		<div class="pagination">
+			<th:block th:if="${pagination.getTotalListCnt() != 0}">
+				<th:block th:if="${pagination.getPage() != 1}">
+					<a th:href="|javascript:fnc_pageMove('1')|" class="first"></a>
+					<a th:href="|javascript:fnc_pageMove('${pagination.getPrev()}')|" class="prev"></a> 
+				</th:block>
+			</th:block>
+			<ul th:each="page: ${#numbers.sequence(pagination.getStartPage(), pagination.getEndPage())}">	
+				<li>
+					<a th:if="${page == pagination.getPage()}" th:text="${page}" class="on"></a>
+					<a th:unless="${page == pagination.getPage()}" th:text="${page}" th:href="|javascript:fnc_pageMove('${page}')|"></a> 
+				</li>
+			</ul>	
+			<th:block th:if="${pagination.getTotalListCnt() != 0}">
+				<th:block th:if="${pagination.getPage() != pagination.totalPageCnt}">
+					<a th:href="|javascript:fnc_pageMove('${pagination.getNext()}')|" class="next"></a>
+					<a th:href="|javascript:fnc_pageMove('${pagination.getTotalPageCnt()}')|" class="last"></a>
+				</th:block>
+			</th:block>	
+		</div>
+		<script layout:fragment="script" th:inline="javascript" type='text/javascript'>
+			const strParams = [[${strParams}]];
+			function sch(){
+				f = document.searchFrm;
+				f.page.value=1;
+			    f.submit();
+			}
+			
+			function fnc_detail(a, b){
+				console.log(strParams)
+				location.href = "/course_group/chrgrp_ins?method="+a+"&cgm_cd="+b+"&"+strParams;
+			}
+		
+			function fnc_pageMove(page){
+			   var f = document.searchFrm;
+			   f.page.value = page;
+			   f.submit();
+			   
+			 }
+		</script>
+</div>
+</html>
+	
